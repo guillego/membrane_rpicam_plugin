@@ -56,7 +56,18 @@ defmodule Membrane.Rpicam.Source do
                 spec: pos_integer() | :camera_default,
                 default: :camera_default,
                 description: """
-                Set the target bitrate for the H.264 encoder, in bits per second. Only applies when encoding in H.264 format.
+                Set the target bitrate for the H.264 encoder, in bits per second.
+                Only applies when encoding in H.264 format.
+                """
+              ],
+              roi: [
+                spec: String | :camera_default,
+                default: :camera_default,
+                description: """
+                The --roi (region of interest) option allows the user to select a particular
+                crop from the full field of view provided by the sensor.
+                The coordinates are specified as a proportion of the available field of view,
+                so --roi 0,0,1,1 would have no effect at all.
                 """
               ],
               libav_audio: [
@@ -136,10 +147,10 @@ defmodule Membrane.Rpicam.Source do
     width = resolve_defaultable_option(opts.width, 0)
     height = resolve_defaultable_option(opts.height, 0)
     bitrate = resolve_defaultable_option(opts.bitrate, 0)
+    roi = resolve_defaultable_option(opts.roi, "0,0,1,1")
     libav_audio = bool_to_integer(opts.libav_audio)
 
-
-    "#{@app_name} -t #{timeout} --framerate #{framerate_float} --width #{width} --height #{height} --bitrate #{bitrate} --libav_audio #{libav_audio} -o -"
+    "#{@app_name} -t #{timeout} --framerate #{framerate_float} --width #{width} --height #{height} --bitrate #{bitrate} --roi #{roi} --libav_audio #{libav_audio} -o -"
   end
 
   @spec resolve_defaultable_option(:camera_default | x, x) :: x when x: var
@@ -153,5 +164,4 @@ defmodule Membrane.Rpicam.Source do
   @spec bool_to_integer(boolean()) :: integer()
   defp bool_to_integer(true), do: 1
   defp bool_to_integer(false), do: 0
-
 end
