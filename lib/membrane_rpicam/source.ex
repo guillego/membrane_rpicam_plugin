@@ -51,6 +51,13 @@ defmodule Membrane.Rpicam.Source do
                 No delay can cause a crash on Nerves system when initalizing the
                 element during the boot sequence of the device.
                 """
+              ],
+              bitrate: [
+                spec: pos_integer() | :camera_default,
+                default: :camera_default,
+                description: """
+                Set the target bitrate for the H.264 encoder, in bits per second. Only applies when encoding in H.264 format.
+                """
               ]
 
   @impl true
@@ -121,8 +128,9 @@ defmodule Membrane.Rpicam.Source do
 
     width = resolve_defaultable_option(opts.width, 0)
     height = resolve_defaultable_option(opts.height, 0)
+    bitrate = resolve_defaultable_option(opts.bitrate, 0)
 
-    "#{@app_name} -t #{timeout} --framerate #{framerate_float} --width #{width} --height #{height} -o -"
+    "#{@app_name} -t #{timeout} --framerate #{framerate_float} --width #{width} --height #{height} --bitrate #{bitrate} -o -"
   end
 
   @spec resolve_defaultable_option(:camera_default | x, x) :: x when x: var
