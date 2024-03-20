@@ -69,13 +69,6 @@ defmodule Membrane.Rpicam.Source do
                 The coordinates are specified as a proportion of the available field of view,
                 so --roi 0,0,1,1 would have no effect at all.
                 """
-              ],
-              libav_audio: [
-                spec: boolean(),
-                default: false,
-                description: """
-                Set this option to enable audio encoding together with the video stream. When audio encoding is enabled, an output format that supports audio (e.g. mpegts, mkv, mp4) must be used.
-                """
               ]
 
   @impl true
@@ -148,9 +141,8 @@ defmodule Membrane.Rpicam.Source do
     height = resolve_defaultable_option(opts.height, 0)
     bitrate = resolve_defaultable_option(opts.bitrate, 0)
     roi = resolve_defaultable_option(opts.roi, "0,0,1,1")
-    libav_audio = bool_to_integer(opts.libav_audio)
 
-    "#{@app_name} -t #{timeout} --framerate #{framerate_float} --width #{width} --height #{height} --bitrate #{bitrate} --roi #{roi} --libav_audio #{libav_audio} -o -"
+    "#{@app_name} -t #{timeout} --framerate #{framerate_float} --width #{width} --height #{height} --bitrate #{bitrate} --roi #{roi} -o -"
   end
 
   @spec resolve_defaultable_option(:camera_default | x, x) :: x when x: var
@@ -160,8 +152,4 @@ defmodule Membrane.Rpicam.Source do
       x -> x
     end
   end
-
-  @spec bool_to_integer(boolean()) :: integer()
-  defp bool_to_integer(true), do: 1
-  defp bool_to_integer(false), do: 0
 end
